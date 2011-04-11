@@ -8,6 +8,7 @@ our $VERSION = 0.1;
 use BarnOwl;
 use BarnOwl::Hooks;
 
+use DateTime;
 use MongoDB;
 
 our $messages = undef;
@@ -36,6 +37,16 @@ sub handle_message {
     my $m = shift;
     if (!$messages) {
         return;
+    }
+
+    $m = {%{$m}};
+
+    delete $m->{'id'};
+    delete $m->{'deleted'};
+    delete $m->{'zwriteline'};
+    if (exists($m->{'unix_time'})) {
+        $m->{'time'} = DateTime->from_epoch(epoch => $m->{'unix_time'});
+        delete $m->{'unix_time'};
     }
 
     $messages->insert($m);
