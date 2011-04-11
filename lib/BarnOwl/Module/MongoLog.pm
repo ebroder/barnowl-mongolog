@@ -73,6 +73,10 @@ sub handle_message {
         delete $m->{'login'};
     }
 
+    if ($m->{'opcode'} eq '') {
+        delete $m->{'opcode'};
+    }
+
     $messages->insert($m);
 }
 
